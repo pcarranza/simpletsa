@@ -8,9 +8,12 @@ import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Map;
 
 import es.zoocial.util.ArgsHelper;
@@ -55,9 +58,9 @@ public class KeystoreHandler {
 		} finally {
 			IOHelper.closeQuietly(is);
 		}
-
 	}
 
+	
 	public void testKeystore() throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException {
 		ArgsHelper.notNull("keystore", keystore);
 		Certificate[] certificateChain = keystore.getCertificateChain(model.getCertAlias());
@@ -66,6 +69,35 @@ public class KeystoreHandler {
 		Key key = keystore.getKey(model.getKeyAlias(), model.getKeyPassword().toCharArray());
 		ArgsHelper.notNull("Private key", key);
 	}
+	
+	
+	public X509Certificate getCertificate() throws KeyStoreException {
+		ArgsHelper.notNull("Keystore", keystore);
+		ArgsHelper.notNull("Model", model);
+		return (X509Certificate)keystore.getCertificate(model.getCertAlias());
+		
+	}
+	
+	
+	public Certificate[] getCertChain() throws KeyStoreException {
+		ArgsHelper.notNull("Keystore", keystore);
+		ArgsHelper.notNull("Model", model);
+		return keystore.getCertificateChain(model.getCertAlias());
+	}
+	
+	
+	
+	public PrivateKey getPrivateKey() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
+		ArgsHelper.notNull("Keystore", keystore);
+		ArgsHelper.notNull("Model", model);
+		return (PrivateKey)keystore.getKey(model.keyAlias, model.keyPassword.toCharArray());
+	}
+	
+	
+	public PublicKey getPublicKey() throws KeyStoreException {
+		return getCertificate().getPublicKey();
+	}
+	
 
 	public static class KeystoreModel {
 

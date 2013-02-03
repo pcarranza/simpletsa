@@ -66,7 +66,10 @@ public class Configuration {
 		while (keyIterator.hasNext()) {
 			String key = keyIterator.next();
 			if (StringHelper.startsWith(prefix, key)) {
-				map.put(key.substring(prefix.length()), getProperty(key));
+				String newKey = key.substring(prefix.length());
+				while (newKey.startsWith("."))
+					newKey = newKey.substring(1);
+				map.put(newKey, getProperty(key));
 			}
 		}
 		return map;
