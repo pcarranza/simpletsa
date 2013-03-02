@@ -1,5 +1,6 @@
 package es.zoocial.util;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,14 +9,14 @@ import java.net.URL;
 
 public class IOHelper {
 	
-	public static void closeQuietly(InputStream is) {
-		if (is == null)
+	public static void closeQuietly(Closeable stream) {
+		if (stream == null)
 			return;
 		
 		try {
-			is.close();
+			stream.close();
 		} catch (IOException e) {
-			LogHelper.warning(IOHelper.class, "Could not close inputstream", e);
+			LogHelper.warning(IOHelper.class, "Could not close stream", e);
 		}
 	}
 	

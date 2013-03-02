@@ -17,7 +17,7 @@ public class KeystoreHelper {
 		if (keystore == null) {
 			Configuration conf = new Configuration();
 			conf.loadConfiguration(KeystoreHelper.class.getResource("keystore.properties").toString());
-			Map<String, String> propertySet = conf.getPropertySet("test-keystore");
+			Map<String, String> propertySet = conf.getPropertySet("keystore");
 			URL url = null;
 			try {
 				url = new URL("file:cert/tsa.p12");

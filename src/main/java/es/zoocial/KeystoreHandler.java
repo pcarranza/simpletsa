@@ -165,7 +165,7 @@ public class KeystoreHandler {
 		}
 
 		public String getKeystoreType() {
-			return StringHelper.replaceIfEmpty(keystoreType, "JKS");
+			return StringHelper.notEmpty(keystoreType, "JKS");
 		}
 
 		public String getKeystoreFilename() {
@@ -181,11 +181,11 @@ public class KeystoreHandler {
 		}
 
 		public String getKeyAlias() {
-			return StringHelper.replaceIfEmpty(keyAlias, "mykey");
+			return StringHelper.notEmpty(keyAlias, "mykey");
 		}
 
 		public String getCertAlias() {
-			return StringHelper.replaceIfEmpty(certAlias, "mykey");
+			return StringHelper.notEmpty(certAlias, "mykey");
 		}
 
 	}

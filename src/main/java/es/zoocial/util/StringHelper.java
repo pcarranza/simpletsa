@@ -31,7 +31,7 @@ public class StringHelper {
 		return str.startsWith(prefix);
 	}
 
-	public static String replaceIfEmpty(String str, String replaceFor) {
+	public static String notEmpty(String str, String replaceFor) {
 		if (isEmpty(str)) 
 			return replaceFor;
 		return str;

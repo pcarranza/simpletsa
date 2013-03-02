@@ -15,4 +15,15 @@ public class LogHelper {
 		log.log(Level.WARNING, message, t);
 	}
 
+	public static void info(Class<?> clazz, String message) {
+		Logger log = Logger.getLogger(clazz.getName());
+		log.log(Level.INFO, message);
+	}
+
+	public static void debug(Class<?> clazz, String message) {
+		Logger log = Logger.getLogger(clazz.getName());
+		log.log(Level.FINE, message);
+		
+	}
+
 }
