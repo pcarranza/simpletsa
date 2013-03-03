@@ -17,4 +17,12 @@
     <Arg>org.slf4j.simpleLogger.showShortLogName</Arg>
     <Arg>true</Arg>
   </Call>
+  <Call class="java.lang.System" name="setProperty">
+    <Arg>org.slf4j.simpleLogger.showDateTime</Arg>
+    <Arg>true</Arg>
+  </Call>
+  <Call class="java.lang.System" name="setProperty">
+    <Arg>org.slf4j.simpleLogger.dateTimeFormat</Arg>
+    <Arg>yyyy-MM-dd HH:mm:ss.S</Arg>
+  </Call>
 </Configure>
