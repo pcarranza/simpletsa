@@ -1,6 +1,7 @@
 package es.zoocial.web;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 
 import javax.servlet.ServletConfig;
@@ -102,13 +103,13 @@ public class TimestampServlet extends HttpServlet {
     	log.debug(String.format("TS Request received from %s", req.getRemoteAddr()));
     	TimeStampResponse stampResponse = stamper.timestamp(rq);
     	if (stampResponse == null) {
-    		log.debug(String.format("TS Request received from %s is not acceptable", 
+    		log.warn(String.format("TS Request received from %s is not acceptable", 
     				req.getRemoteAddr()));
     		resp.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "Could not generate timestamp response");
     		return;
     	}
     	if (stampResponse.getTimeStampToken() == null) {
-    		log.debug(String.format("TS Request received from %s is not acceptable", 
+    		log.warn(String.format("TS Request received from %s is not acceptable", 
     				req.getRemoteAddr()));
     		resp.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "Could not generate timestamp response");
     		return;
@@ -129,15 +130,14 @@ public class TimestampServlet extends HttpServlet {
 		resp.setContentType(TIMESTAMP_REPLY_CONTENT_TYPE);
 		resp.setContentLength(response.length);
 
-    	ServletOutputStream outputStream = null;
+    	BufferedOutputStream outputStream = null;
     	try {
-    		outputStream = resp.getOutputStream();
+    		outputStream = new BufferedOutputStream(resp.getOutputStream());
     		outputStream.write(response);
-    		outputStream.flush();
-    		log.debug(String.format("Sending response to %s", req.getRemoteAddr()));
     	} finally {
     		IOHelper.closeQuietly(outputStream);
     	}
+		log.debug(String.format("Response sent to %s", req.getRemoteAddr()));
     }
     
     

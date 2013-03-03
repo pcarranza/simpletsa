@@ -35,6 +35,9 @@ public class TimestampServletTest {
 	
 	private static String hostname = "127.0.0.1";
 	private static int port = 9000;
+//	private static int port = 8080;
+	
+	private final int maxStress = 100;
 	
 	private HttpClientBuilder builder = HttpClientBuilder.create();
 	
@@ -118,7 +121,8 @@ public class TimestampServletTest {
 		Assert.assertEquals("Response content transfer encoding not as expected", 
 				TimestampServlet.TRANSFER_ENCODING_BINARY, 
 				response.getFirstHeader(TimestampServlet.TRANSFER_ENCODING_HEADER).getValue());
-
+		response.close();
+		
 		byte[] responseBytes = new byte[(int)responseEntity.getContentLength()];
 		responseEntity.getContent().read(responseBytes);
 		
@@ -127,7 +131,7 @@ public class TimestampServletTest {
 		tsresponse.validate(timeStampRequest);
 	}
 	
-
+	
 	@Test
 	public void testServletRequestInBase64ModeWorks() throws IOException, TSPException {
 		
@@ -157,6 +161,7 @@ public class TimestampServletTest {
 		Assert.assertEquals("Response content transfer encoding not as expected", 
 				TimestampServlet.TRANSFER_ENCODING_BASE64, 
 				response.getFirstHeader(TimestampServlet.TRANSFER_ENCODING_HEADER).getValue());
+		response.close();
 		
 		byte[] responseBytes = new byte[(int)responseEntity.getContentLength()];
 		responseEntity.getContent().read(responseBytes);
@@ -166,6 +171,92 @@ public class TimestampServletTest {
 		responseBytes = Base64.decode(responseBytes);
 		TimeStampResponse tsresponse = new TimeStampResponse(responseBytes);
 		tsresponse.validate(timeStampRequest);
+	}
+
+	
+	@Test
+	public void binaryStressTest() throws IOException, TSPException {
+		CloseableHttpClient client = builder.build();
+		HttpHost host = new HttpHost(hostname, port);
+		
+		for (int i = 0; i < maxStress; i++) {
+			TimeStampRequestGenerator generator = new TimeStampRequestGenerator();
+			TimeStampRequest timeStampRequest = generator.generate(TSPAlgorithms.SHA1, DigestHelper.digest("this is a test message " + i));
+			
+			ByteArrayEntity entity = new ByteArrayEntity(timeStampRequest.getEncoded());
+			
+			HttpPost post = new HttpPost("/tsa");
+			post.setHeader("Content-Type", TimestampServlet.TIMESTAMP_QUERY_CONTENT_TYPE);
+			post.setHeader(TimestampServlet.TRANSFER_ENCODING_HEADER, TimestampServlet.TRANSFER_ENCODING_BINARY);
+			post.setEntity(entity);
+			
+			CloseableHttpResponse response = null;
+			response = client.execute(host, post);
+			Assert.assertNotNull("response", response);
+			Assert.assertEquals("Response code is not as expected", 
+					HttpServletResponse.SC_OK, response.getStatusLine().getStatusCode());
+			
+			HttpEntity responseEntity = response.getEntity();
+	
+			Assert.assertEquals("Response content type not as expected", 
+					TimestampServlet.TIMESTAMP_REPLY_CONTENT_TYPE, responseEntity.getContentType().getValue());
+			Assert.assertEquals("Response content transfer encoding not as expected", 
+					TimestampServlet.TRANSFER_ENCODING_BINARY, 
+					response.getFirstHeader(TimestampServlet.TRANSFER_ENCODING_HEADER).getValue());
+			response.close();
+	
+			byte[] responseBytes = new byte[(int)responseEntity.getContentLength()];
+			responseEntity.getContent().read(responseBytes);
+			
+			Assert.assertNotNull("Response content", responseBytes);
+			TimeStampResponse tsresponse = new TimeStampResponse(responseBytes);
+			tsresponse.validate(timeStampRequest);
+		}
+	}
+	
+
+	@Test
+	public void base64StressTest() throws IOException, TSPException {
+		
+		CloseableHttpClient client = builder.build();
+		HttpHost host = new HttpHost(hostname, port);
+		
+		for (int i = 0; i < maxStress; i++) {
+			HttpPost post = new HttpPost("/tsa");
+			
+			TimeStampRequestGenerator generator = new TimeStampRequestGenerator();
+			TimeStampRequest timeStampRequest = generator.generate(TSPAlgorithms.SHA1, DigestHelper.digest("this is a test message " + i));
+			
+			ByteArrayEntity entity = new ByteArrayEntity(Base64.encode(timeStampRequest.getEncoded()));
+			
+			post.setHeader("Content-Type", TimestampServlet.TIMESTAMP_QUERY_CONTENT_TYPE);
+			post.setHeader(TimestampServlet.TRANSFER_ENCODING_HEADER, TimestampServlet.TRANSFER_ENCODING_BASE64);
+			post.setEntity(entity);
+			
+			CloseableHttpResponse response = null;
+			response = client.execute(host, post);
+			Assert.assertNotNull("response", response);
+			Assert.assertEquals("Response code is not as expected", 
+					HttpServletResponse.SC_OK, response.getStatusLine().getStatusCode());
+	
+			HttpEntity responseEntity = response.getEntity();
+	
+			Assert.assertEquals("Response content type not as expected", 
+					TimestampServlet.TIMESTAMP_REPLY_CONTENT_TYPE, responseEntity.getContentType().getValue());
+			Assert.assertEquals("Response content transfer encoding not as expected", 
+					TimestampServlet.TRANSFER_ENCODING_BASE64, 
+					response.getFirstHeader(TimestampServlet.TRANSFER_ENCODING_HEADER).getValue());
+			response.close();
+			
+			byte[] responseBytes = new byte[(int)responseEntity.getContentLength()];
+			responseEntity.getContent().read(responseBytes);
+			
+			Assert.assertNotNull("Response content", responseBytes);
+			
+			responseBytes = Base64.decode(responseBytes);
+			TimeStampResponse tsresponse = new TimeStampResponse(responseBytes);
+			tsresponse.validate(timeStampRequest);
+		}
 	}
 
 	
@@ -200,6 +291,7 @@ public class TimestampServletTest {
 		Assert.assertEquals("Response content transfer encoding not as expected", 
 				TimestampServlet.TRANSFER_ENCODING_BASE64, 
 				response.getFirstHeader(TimestampServlet.TRANSFER_ENCODING_HEADER).getValue());
+		response.close();
 		
 		byte[] responseBytes = new byte[(int)responseEntity.getContentLength()];
 		responseEntity.getContent().read(responseBytes);
