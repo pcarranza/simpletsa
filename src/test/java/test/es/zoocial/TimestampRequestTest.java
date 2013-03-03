@@ -8,8 +8,8 @@ import org.bouncycastle.tsp.TimeStampResponse;
 import org.junit.Assert;
 import org.junit.Test;
 
-import es.zoocial.KeystoreHandler;
-import es.zoocial.Timestamper;
+import es.zoocial.tsa.KeystoreHandler;
+import es.zoocial.tsa.Timestamper;
 
 public class TimestampRequestTest {
 	

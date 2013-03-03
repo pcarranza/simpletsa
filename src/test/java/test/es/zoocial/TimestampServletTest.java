@@ -33,9 +33,9 @@ public class TimestampServletTest {
 	
 	private static Server server;
 	
-	private String hostname = "127.0.0.1";
-//	private int port = 9000;
-	private int port = 8080;
+	private static String hostname = "127.0.0.1";
+	private static int port = 9000;
+	
 	private HttpClientBuilder builder = HttpClientBuilder.create();
 	
 	@BeforeClass
@@ -48,8 +48,8 @@ public class TimestampServletTest {
 		
 		
 		SelectChannelConnector connector = new SelectChannelConnector();
-		connector.setHost("127.0.0.1");
-		connector.setPort(9000);
+		connector.setHost(hostname);
+		connector.setPort(port);
 		
 		server = new Server();
 		server.addHandler(handler);

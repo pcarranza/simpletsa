@@ -5,9 +5,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-import es.zoocial.Configuration;
-import es.zoocial.KeystoreHandler;
-import es.zoocial.KeystoreHandler.KeystoreModel;
+import es.zoocial.tsa.Configuration;
+import es.zoocial.tsa.KeystoreHandler;
+import es.zoocial.tsa.KeystoreHandler.KeystoreModel;
 
 public class KeystoreHelper {
 	

@@ -6,7 +6,7 @@ import java.security.UnrecoverableKeyException;
 
 import org.junit.Test;
 
-import es.zoocial.KeystoreHandler;
+import es.zoocial.tsa.KeystoreHandler;
 
 public class KeyStoreTest {
 	

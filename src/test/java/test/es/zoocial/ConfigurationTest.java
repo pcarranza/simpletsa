@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import es.zoocial.Configuration;
+import es.zoocial.tsa.Configuration;
 
 public class ConfigurationTest {
 

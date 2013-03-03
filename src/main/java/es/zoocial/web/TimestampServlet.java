@@ -17,10 +17,10 @@ import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import es.zoocial.Configuration;
-import es.zoocial.KeystoreHandler;
-import es.zoocial.KeystoreHandler.KeystoreModel;
-import es.zoocial.Timestamper;
+import es.zoocial.tsa.Configuration;
+import es.zoocial.tsa.KeystoreHandler;
+import es.zoocial.tsa.Timestamper;
+import es.zoocial.tsa.KeystoreHandler.KeystoreModel;
 import es.zoocial.util.IOHelper;
 import es.zoocial.util.StringHelper;
 

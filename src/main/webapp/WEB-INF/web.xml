@@ -2,6 +2,7 @@
     <servlet>
         <servlet-name>tsa</servlet-name>
         <servlet-class>es.zoocial.web.TimestampServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>tsa</servlet-name>

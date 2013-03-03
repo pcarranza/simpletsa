@@ -1,4 +1,4 @@
-package es.zoocial;
+package es.zoocial.tsa;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,8 +13,10 @@ import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Map;
+import java.util.Set;
 
 import es.zoocial.util.ArgsHelper;
 import es.zoocial.util.IOHelper;
@@ -61,13 +63,29 @@ public class KeystoreHandler {
 	}
 
 	
-	public void testKeystore() throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException {
+	public void testKeystore() throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, CertificateParsingException {
 		ArgsHelper.notNull("keystore", keystore);
 		Certificate[] certificateChain = keystore.getCertificateChain(model.getCertAlias());
 		ArgsHelper.notNull("Certificate chain", certificateChain);
 		
 		Key key = keystore.getKey(model.getKeyAlias(), model.getKeyPassword().toCharArray());
 		ArgsHelper.notNull("Private key", key);
+		
+		X509Certificate certificate = (X509Certificate)certificateChain[0];
+		Set<String> criticalExtensionOIDs = certificate.getCriticalExtensionOIDs();
+		if (!criticalExtensionOIDs.contains("2.5.29.37"))
+			throw new KeyStoreException("Certificate extended key usage is not marked as critical");
+		
+		boolean isForTimestamping = false;
+		for (String keyUsage : certificate.getExtendedKeyUsage()) {
+			if ("1.3.6.1.5.5.7.3.8".equals(keyUsage)) {
+				isForTimestamping = true;
+				break;
+			}
+		}
+		if (!isForTimestamping) {
+			throw new KeyStoreException("Certificate extended key usage is not for timestamping");
+		}
 	}
 	
 	
