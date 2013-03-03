@@ -45,6 +45,16 @@
 			<version>4.3-alpha1</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.7.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -59,6 +69,7 @@
 					<include>**/*.png</include>
 					<include>**/*.gif</include>
 					<include>**/*.css</include>
+					<include>**/*.xml</include>
 				</includes>
 			</resource>
 		</resources>
@@ -70,6 +81,13 @@
 		</testResources>
 
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<webXml>src\main\webapp\WEB-INF\web.xml</webXml>
+				</configuration>
+			</plugin>
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.4</version>
@@ -101,4 +119,5 @@
 		</plugins>
 	</build>
 
+	<packaging>war</packaging>
 </project>

@@ -37,10 +37,10 @@ public class Configuration {
 	}
 
 	
-	public void loadConfiguration(String configurationFilename) {
-		ArgsHelper.notEmpty("configurationFilename", configurationFilename);
+	public void loadConfiguration(String configuration) {
+		ArgsHelper.notEmpty("configuration", configuration);
 		
-		File config = IOHelper.getValidFile(configurationFilename);
+		File config = IOHelper.getValidFile(configuration);
 		
 		InputStream is = null;
 		try {

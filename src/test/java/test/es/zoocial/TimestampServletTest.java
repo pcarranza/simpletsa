@@ -34,7 +34,8 @@ public class TimestampServletTest {
 	private static Server server;
 	
 	private String hostname = "127.0.0.1";
-	private int port = 9000;
+//	private int port = 9000;
+	private int port = 8080;
 	private HttpClientBuilder builder = HttpClientBuilder.create();
 	
 	@BeforeClass

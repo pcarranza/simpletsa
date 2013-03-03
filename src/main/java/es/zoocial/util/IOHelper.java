@@ -3,11 +3,15 @@ package es.zoocial.util;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class IOHelper {
+	
+	private static Logger log = LoggerFactory.getLogger(IOHelper.class);
 	
 	public static void closeQuietly(Closeable stream) {
 		if (stream == null)
@@ -16,7 +20,7 @@ public class IOHelper {
 		try {
 			stream.close();
 		} catch (IOException e) {
-			LogHelper.warning(IOHelper.class, "Could not close stream", e);
+			log.warn("Could not close stream", e);
 		}
 	}
 	

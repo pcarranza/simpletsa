@@ -14,18 +14,21 @@ import javax.servlet.http.HttpServletResponse;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.util.encoders.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.zoocial.Configuration;
 import es.zoocial.KeystoreHandler;
 import es.zoocial.KeystoreHandler.KeystoreModel;
 import es.zoocial.Timestamper;
 import es.zoocial.util.IOHelper;
-import es.zoocial.util.LogHelper;
 import es.zoocial.util.StringHelper;
 
 public class TimestampServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
+	
+	private Logger log = LoggerFactory.getLogger(TimestampServlet.class);
 	
 	public static final String TIMESTAMP_QUERY_CONTENT_TYPE = "application/timestamp-query";
     public static final String TIMESTAMP_REPLY_CONTENT_TYPE = "application/timestamp-reply";
@@ -48,7 +51,7 @@ public class TimestampServlet extends HttpServlet {
         	configurationFile = (String)context.getAttribute("configuration");
     	}
     	
-    	LogHelper.info(getClass(), String.format("Configuring servlet with file %s", configurationFile));
+    	log.info(String.format("Configuring servlet with file '%s'", configurationFile));
     	
     	Configuration conf = new Configuration();
     	conf.loadConfiguration(configurationFile);
@@ -57,20 +60,20 @@ public class TimestampServlet extends HttpServlet {
     	store.loadKeystore(KeystoreModel.fromMap(conf.getPropertySet("keystore")));
     	stamper = new Timestamper(store);
     	
-    	LogHelper.info(getClass(), "Servlet launched");
+    	log.info("Servlet launched");
     }
     
     @Override
     public void destroy() {
     	super.destroy();
-    	LogHelper.info(getClass(), "Servlet stopped");
+    	log.info("Servlet stopped");
     }
     
     
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
     		throws ServletException, IOException {
-    	LogHelper.info(getClass(), String.format("Invalid method GET from %s", req.getRemoteAddr()));
+    	log.info(String.format("Invalid method GET from %s", req.getRemoteAddr()));
     	resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Only supports POST method");
     }
     
@@ -83,7 +86,7 @@ public class TimestampServlet extends HttpServlet {
     		return;
     	}
     	if (req.getContentLength() == 0) {
-    		LogHelper.error(TimestampServlet.class, "timestamp request is empty", null);
+    		log.error("timestamp request is empty");
     		resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "timestamp request is empty");
     		return;
     	}
@@ -92,20 +95,20 @@ public class TimestampServlet extends HttpServlet {
     	try {
     		rq = parseTSRequest(req);
     	} catch (Exception e) {
-    		LogHelper.error(TimestampServlet.class, "could not read timestamp request", e);
+    		log.error("could not read timestamp request", e);
     		resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "could not read timestamp request");
     		return;
     	}
-    	LogHelper.debug(getClass(), String.format("TS Request received from %s", req.getRemoteAddr()));
+    	log.debug(String.format("TS Request received from %s", req.getRemoteAddr()));
     	TimeStampResponse stampResponse = stamper.timestamp(rq);
     	if (stampResponse == null) {
-    		LogHelper.debug(getClass(), String.format("TS Request received from %s is not acceptable", 
+    		log.debug(String.format("TS Request received from %s is not acceptable", 
     				req.getRemoteAddr()));
     		resp.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "Could not generate timestamp response");
     		return;
     	}
     	if (stampResponse.getTimeStampToken() == null) {
-    		LogHelper.debug(getClass(), String.format("TS Request received from %s is not acceptable", 
+    		log.debug(String.format("TS Request received from %s is not acceptable", 
     				req.getRemoteAddr()));
     		resp.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "Could not generate timestamp response");
     		return;
@@ -116,10 +119,10 @@ public class TimestampServlet extends HttpServlet {
     	if (isBase64(req)) {
     		resp.setHeader(TRANSFER_ENCODING_HEADER, TRANSFER_ENCODING_BASE64);
     		response = Base64.encode(response);
-        	LogHelper.debug(getClass(), String.format("Responding to %s is in base64", req.getRemoteAddr()));
+        	log.debug(String.format("Responding to %s is in base64", req.getRemoteAddr()));
     	} else {
     		resp.setHeader(TRANSFER_ENCODING_HEADER, TRANSFER_ENCODING_BINARY);
-    		LogHelper.debug(getClass(), String.format("Responding to %s is in binary mode", req.getRemoteAddr()));
+    		log.debug(String.format("Responding to %s is in binary mode", req.getRemoteAddr()));
     	}
 
 		resp.setStatus(HttpServletResponse.SC_OK);
@@ -131,7 +134,7 @@ public class TimestampServlet extends HttpServlet {
     		outputStream = resp.getOutputStream();
     		outputStream.write(response);
     		outputStream.flush();
-    		LogHelper.debug(getClass(), String.format("Sending response to %s", req.getRemoteAddr()));
+    		log.debug(String.format("Sending response to %s", req.getRemoteAddr()));
     	} finally {
     		IOHelper.closeQuietly(outputStream);
     	}
