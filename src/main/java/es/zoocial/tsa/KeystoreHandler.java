@@ -3,7 +3,6 @@ package es.zoocial.tsa;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -12,7 +11,6 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Map;
@@ -47,16 +45,8 @@ public class KeystoreHandler {
 			testKeystore(); // Second time to check that cert alias is a forward only integer
 		} catch (FileNotFoundException e) {
 			throw new IllegalArgumentException(String.format("File %s could not be found", model.getKeystoreFilename()), e);
-		} catch (NoSuchAlgorithmException e) {
+		} catch (Exception e) {
 			throw new IllegalArgumentException(String.format("Could not load keystore %s", model.getKeystoreFilename()), e);
-		} catch (CertificateException e) {
-			throw new IllegalArgumentException(String.format("Could not load keystore %s", model.getKeystoreFilename()), e);
-		} catch (IOException e) {
-			throw new IllegalArgumentException(String.format("Could not load keystore %s", model.getKeystoreFilename()), e);
-		} catch (UnrecoverableKeyException e) {
-			throw new IllegalArgumentException(String.format("Keystore %s validation tests failed", model.getKeystoreFilename()), e);
-		} catch (KeyStoreException e) {
-			throw new IllegalArgumentException(String.format("Keystore %s validation tests failed", model.getKeystoreFilename()), e);
 		} finally {
 			IOHelper.closeQuietly(is);
 		}
@@ -73,6 +63,7 @@ public class KeystoreHandler {
 		
 		X509Certificate certificate = (X509Certificate)certificateChain[0];
 		Set<String> criticalExtensionOIDs = certificate.getCriticalExtensionOIDs();
+		ArgsHelper.notNull("Critical extensions", criticalExtensionOIDs);
 		if (!criticalExtensionOIDs.contains("2.5.29.37"))
 			throw new KeyStoreException("Certificate extended key usage is not marked as critical");
 		
@@ -205,7 +196,5 @@ public class KeystoreHandler {
 		public String getCertAlias() {
 			return StringHelper.notEmpty(certAlias, "mykey");
 		}
-
 	}
-
 }
