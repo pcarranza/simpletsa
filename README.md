@@ -7,3 +7,6 @@ A very small and simple TSA [(Timestamping Authority)](http://en.wikipedia.org/w
 
 It just signs a timestamp and whatever it receives with the configured certificate. It's for development only, not full valid response.
 
+# How to create a TSA certificate
+
+Refer to this file for that: https://github.com/pcarranza/simpletsa/blob/master/cert/how_to_create_timestamping_cert.md

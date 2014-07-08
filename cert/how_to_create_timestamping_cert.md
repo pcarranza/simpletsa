@@ -55,9 +55,9 @@
 
 - Look for timestamping critical extensions:
 
-    X509v3 extensions:
-        X509v3 Extended Key Usage: critical
-            Time Stamping
+    > X509v3 extensions:
+    >     X509v3 Extended Key Usage: critical
+    >         Time Stamping
 
 ## Step 2: import your openssl generated timestamper keypair and certificate with java keytool
 - Export the tsa certificate with openssl with the whole chain (the password should be longer than 6 chars)
