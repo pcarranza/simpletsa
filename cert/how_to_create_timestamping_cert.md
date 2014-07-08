@@ -2,8 +2,10 @@
 
 - Create basic CA folder
 
-    > mkdir CA
-    > cd CA
+```
+mkdir CA
+cd CA
+```
 
 - Create basic RSA key and Certificate Signature Request that will work as a CA
 
@@ -16,16 +18,20 @@
 
 - You now have 3 files:
 
-    > ca.key -> your CA private key
-    > ca.csr -> certificate signature request
-    > ca.pem -> your CA trusted public certificate
+```
+ca.key -> your CA private key
+ca.csr -> certificate signature request
+ca.pem -> your CA trusted public certificate
+```
 
 ## Step 1: create your TSA certificate and private key with openssl
 
 - Create basic tsa folder
 
-    > mkdir tsa
-    > cd tsa
+```
+mkdir tsa
+cd tsa
+```
 
 - Create another RSA private key
 
@@ -33,9 +39,11 @@
 
 - On osx we will need a basic openssl configuration with a little tweaks
 
-    > cat /System/Library/OpenSSL/openssl.cnf > ext.config
-    > echo "[ tsa ]" >> ext.config
-    > echo "extendedKeyUsage=critical,timeStamping" >> ext.config
+```
+cat /System/Library/OpenSSL/openssl.cnf > ext.config
+echo "[ tsa ]" >> ext.config
+echo "extendedKeyUsage=critical,timeStamping" >> ext.config
+```
 
 - Create a configuration file with the timestamping extensions
 
@@ -55,9 +63,11 @@
 
 - Look for timestamping critical extensions:
 
-    > X509v3 extensions:
-    >     X509v3 Extended Key Usage: critical
-    >         Time Stamping
+```
+X509v3 extensions:
+    X509v3 Extended Key Usage: critical
+        Time Stamping
+```
 
 ## Step 2: import your openssl generated timestamper keypair and certificate with java keytool
 - Export the tsa certificate with openssl with the whole chain (the password should be longer than 6 chars)
